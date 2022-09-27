@@ -1,22 +1,15 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-
 import styled from "styled-components";
 
 import NavBar from "../includes/NavBar";
+import Home from "./Home";
 
 function Index() {
     return (
         <MainContainer>
             <NavBar />
-            {/* <InnerContainer>
-                <LeftContainer>
-                    <SideBar />
-                </LeftContainer>
-                <RightContainer>
-                    <Outlet />
-                </RightContainer>
-            </InnerContainer> */}
+            <Outlet />
         </MainContainer>
     );
 }
