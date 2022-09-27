@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { FaStar } from "react-icons/fa";
 import { FaRegStar } from "react-icons/fa";
 
-function Rating({ rating, onClick, style, setRate }) {
+function Rating({ rating, onClick, style }) {
     return (
         <Stars>
             {/* <Star>

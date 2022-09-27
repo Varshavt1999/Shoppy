@@ -6,6 +6,7 @@ import Skeleton from "react-loading-skeleton";
 import { NavLink, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { BsFillStarFill } from "react-icons/bs";
+import { CartState } from "../../context/Store";
 
 function Product() {
     const [product, setProduct] = useState({});
@@ -13,6 +14,12 @@ function Product() {
     const { id } = useParams();
 
     console.log(product, "hproductiiiiiiiiiiiiiiiiiiiii");
+
+    const {
+        state: { cart },
+        dispatch,
+    } = CartState();
+    console.log(cart, "cart//////////////////////////////");
     useEffect(() => {
         setLoading(true);
         const getProduct = () => {
@@ -79,15 +86,60 @@ function Product() {
                         ${product.price}
                     </h3>
                     <p className="lead ">{product.description}</p>
-                    <button className="btn btn-outline-dark px-4 py-2">
-                        Add To Cart
-                    </button>
-                    <Button
-                        to="/cart"
-                        className="btn btn-outline-dark ms-2 px-3 py-2"
-                    >
-                        Go To Cart
-                    </Button>
+
+                    <ButtonContainer>
+                        {product.rating?.count > 0 ? (
+                            <div>
+                                {console.log(
+                                    cart.some((prod) => prod.id === product.id),
+                                    "some checking"
+                                )}
+                                {
+                                    //some() help us to check that particular item exist in your array or not - it return a boolean
+                                    cart.some(
+                                        (prod) => prod.id === product.id
+                                    ) ? (
+                                        <CartButton
+                                            className="btn btn-outline-dark px-4 py-2"
+                                            onClick={() => {
+                                                dispatch({
+                                                    type: "REMOVE_FROM_CART",
+                                                    payload: product,
+                                                });
+                                            }}
+                                        >
+                                            Remove From Cart
+                                        </CartButton>
+                                    ) : (
+                                        <CartButton
+                                            className="btn btn-outline-dark px-4 py-2"
+                                            onClick={() => {
+                                                dispatch({
+                                                    type: "ADD_TO_CART",
+                                                    payload: product,
+                                                });
+                                            }}
+                                        >
+                                            Add To Cart
+                                        </CartButton>
+                                    )
+                                }
+                            </div>
+                        ) : (
+                            <div>
+                                <CartButton className="btn btn-outline-dark px-4 py-2 out-of-stock">
+                                    Out Of Stock
+                                </CartButton>
+                            </div>
+                        )}
+
+                        <Button
+                            to="/cart"
+                            className="btn btn-outline-dark ms-2 px-3 py-2"
+                        >
+                            Go To Cart
+                        </Button>
+                    </ButtonContainer>
                 </div>
             </>
         );
@@ -100,10 +152,24 @@ function Product() {
         </div>
     );
 }
+const ButtonContainer = styled.div`
+    display: flex;
+`;
+const CartButton = styled.button`
+    display: inline-block;
+    text-decoration: none;
+    margin-right: 20px;
+    color: #000;
+    margin-right: 30px;
+    &.out-of-stock {
+        background-color: red;
+    }
+`;
 const Button = styled(NavLink)`
     display: inline-block;
     text-decoration: none;
     margin-right: 20px;
     color: #000;
+    margin-right: 30px;
 `;
 export default Product;

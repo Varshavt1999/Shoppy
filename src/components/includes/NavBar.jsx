@@ -1,102 +1,98 @@
-import React from "react";
+import React, { useState } from "react";
 import { BiLogIn } from "react-icons/bi";
 import { FaUserPlus } from "react-icons/fa";
 import { BiCartAlt } from "react-icons/bi";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
+import { CartState } from "../../context/Store";
+import QuickCartView from "../screens/QuickCartView";
 
 function NavBar() {
+    const {
+        state: { cart },
+        dispatch,
+    } = CartState();
+    const [cartView, setCartView] = useState(false);
     return (
-        <div>
-            <nav class="navbar navbar-expand-lg navbar-light bg-light py-3 shadow-sm bg-white">
-                <div class="container-fluid">
-                    <NavItem class="navbar-brand fw-bold fs-4" to="/">
-                        Shoppy.
-                    </NavItem>
-                    <button
-                        class="navbar-toggler"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#navbarSupportedContent"
-                        aria-controls="navbarSupportedContent"
-                        aria-expanded="false"
-                        aria-label="Toggle navigation"
-                    >
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div
-                        class="collapse navbar-collapse"
-                        id="navbarSupportedContent"
-                    >
-                        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-                            <li class="nav-item">
-                                <NavItem
-                                    class="nav-link active"
-                                    aria-current="page"
-                                    to="/"
-                                >
-                                    Home
-                                </NavItem>
-                            </li>
-                            <li class="nav-item">
-                                <NavItem class="nav-link" to="/products">
-                                    Products
-                                </NavItem>
-                            </li>
-                            <li class="nav-item">
-                                <NavItem class="nav-link" to="/about">
-                                    About
-                                </NavItem>
-                            </li>
-                            <li class="nav-item">
-                                <NavItem class="nav-link" to="/contacts">
-                                    Contacts
-                                </NavItem>
-                            </li>
-                        </ul>
-                        <Form>
-                            <Input
-                                type="search"
-                                placeholder="Search Product Here.."
-                            />
-                        </Form>
-                        <div className="buttons">
-                            <NavItem
-                                to="/login"
-                                className="btn btn-outline-dark"
-                            >
-                                <BiLogIn className="me-1" /> Login
-                            </NavItem>
-                            <NavItem
-                                to="/register"
-                                className="btn btn-outline-dark ms-2"
-                            >
-                                <FaUserPlus className="me-1" />
-                                Register
-                            </NavItem>
-                            <NavItem
-                                to="/cart"
-                                className="btn btn-outline-dark ms-2"
-                            >
-                                <BiCartAlt className="me-1" />
-                                Cart(0)
-                            </NavItem>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </div>
+        <MainContainer>
+            <div className="wrapper">
+                <Logo to="/">Shoppy.</Logo>
+                <NavList>
+                    <NavItem to="/">Home</NavItem>
+
+                    <NavItem to="/products">Products</NavItem>
+
+                    <NavItem to="/about">About</NavItem>
+
+                    <NavItem to="/contacts">Contacts</NavItem>
+                </NavList>
+
+                <RightContainer>
+                    <Form>
+                        <Input
+                            type="search"
+                            placeholder="Search Product Here.."
+                        />
+                    </Form>
+                    <Item to="/login">
+                        <BiLogIn className="me-1" /> <span>Login</span>
+                    </Item>
+                    <Item to="/register">
+                        <FaUserPlus />
+                        <span>Register</span>
+                    </Item>
+                    <CartItem onClick={() => setCartView(!cartView)}>
+                        <BiCartAlt className="me-1" />
+                        <span>Cart({cart.length})</span>
+                    </CartItem>
+                </RightContainer>
+            </div>
+            <QuickCartView cartView={cartView} />
+        </MainContainer>
     );
 }
+const MainContainer = styled.div`
+    height: 80px;
+    position: relative;
+    & .wrapper {
+        height: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+`;
+const Logo = styled(Link)`
+    display: inline-block;
+    font-size: 30px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #000;
+    width: 20%;
+`;
+const NavList = styled.div`
+    width: 30%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+`;
 const NavItem = styled(NavLink)`
     display: inline-block;
     text-decoration: none;
-    margin-right: 20px;
+    font-weight: bold;
+    font-size: 16px;
     color: #000;
+    &:last-child {
+        margin-right: 0;
+    }
+`;
+
+const RightContainer = styled.div`
+    position: relative;
+    width: 40%;
+    display: flex;
 `;
 const Form = styled.form`
     padding: 10px;
-    width: 20%;
+    width: 40%;
     background-color: aliceblue;
     margin-right: 20px;
 `;
@@ -105,9 +101,34 @@ const Input = styled.input`
     border: none;
     outline: none;
     font-size: 16px;
+    width: 100%;
     appearance: unset;
     &::placeholder {
         font-size: 16px;
     }
 `;
+const Item = styled.div`
+    border: 1px solid #000;
+    padding: 5px;
+    width: 90px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    & span {
+        margin-left: 5px;
+    }
+`;
+const CartItem = styled.div`
+    border: 1px solid #000;
+    padding: 5px;
+    width: 90px;
+    cursor: pointer;
+    margin-right: 0;
+    display: flex;
+    align-items: center;
+    & span {
+        margin-left: 5px;
+    }
+`;
+
 export default NavBar;

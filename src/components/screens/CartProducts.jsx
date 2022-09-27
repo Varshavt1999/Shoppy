@@ -1,50 +1,57 @@
 import React from "react";
 import styled from "styled-components";
+import { CartState } from "../../context/Store";
+import EmptyCart from "../../assets/images/empty-cart.png";
+import Rating from "../includes/Rating";
+import { FaTrashAlt } from "react-icons/fa";
 
 function CartProducts() {
+    const {
+        state: { cart },
+        dispatch,
+    } = CartState();
+    console.log(cart, "cartbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
     return (
         <MainContainer>
             <div className="wrapper">
-                {" "}
-                <CartContainer>
-                    <Product>
-                        <ProductImage />
-                    </Product>
-                    <PurchaseDetails>
-                        <Name>dfdgrfgrgrgergrg</Name>
-                        <PriceBox>3 × $22.3 = $66.9</PriceBox>
-                        <ButtonBox>
-                            <Btn>-</Btn>
-                            <Btn>+</Btn>
-                        </ButtonBox>
-                    </PurchaseDetails>
-                </CartContainer>
-                <CartContainer>
-                    <Product>
-                        <ProductImage />
-                    </Product>
-                    <PurchaseDetails>
-                        <Name>wwdwfwfdwfwf</Name>
-                        <PriceBox>3 × $22.3 = $66.9</PriceBox>
-                        <ButtonBox>
-                            <Btn>-</Btn>
-                            <Btn>+</Btn>
-                        </ButtonBox>
-                    </PurchaseDetails>
-                </CartContainer>
-                <CartContainer>
-                    <Product>
-                        <ProductImage />
-                    </Product>
-                    <PurchaseDetails>
-                        <Name>hjffhegfhefegfe</Name>
-                        <PriceBox>3 × $22.3 = $66.9</PriceBox>
-                        <ButtonBox>
-                            <Btn>-</Btn>
-                            <Btn>+</Btn>
-                        </ButtonBox>
-                    </PurchaseDetails>
-                </CartContainer>
+                {cart.length > 0 ? (
+                    cart.map((cartitem) => (
+                        <CartContainer>
+                            <Product>
+                                <ProductImage
+                                    src={cartitem.image}
+                                    alt="cart-item"
+                                />
+                            </Product>
+                            <PurchaseDetails>
+                                <Name>{cartitem.category}</Name>
+                                <PriceBox>
+                                    {cartitem.qty} × ${cartitem.price} = $
+                                    {cartitem.qty * cartitem.price}
+                                </PriceBox>
+                                <ButtonBox>
+                                    <Btn>-</Btn>
+                                    <Btn>+</Btn>
+                                </ButtonBox>
+                            </PurchaseDetails>
+                            <RightBox>
+                                <RatingBox>
+                                    <Rating rating={cartitem.rating.rate} />
+                                </RatingBox>
+                                <RemoveIconBox>
+                                    <FaTrashAlt />
+                                </RemoveIconBox>
+                            </RightBox>
+                        </CartContainer>
+                    ))
+                ) : (
+                    <CartEmptyContainer>
+                        <EmptyCartBox>
+                            <EmptyCartImg src={EmptyCart} alt="empty-cart" />
+                        </EmptyCartBox>
+                        <EmptyCartText>Cart is empty</EmptyCartText>
+                    </CartEmptyContainer>
+                )}
             </div>
         </MainContainer>
     );
@@ -52,31 +59,48 @@ function CartProducts() {
 
 const MainContainer = styled.div`
     padding: 50px 20px;
+    background-color: #b0c4de;
+    & .wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column-reverse;
+    }
 `;
 const CartContainer = styled.div`
     margin-bottom: 30px;
     border: 1px solid #129e6b;
     border-radius: 4px;
     padding: 15px;
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    grid-gap: 50px;
+    display: flex;
+    justify-content: space-between;
+    &:first-child {
+        margin-bottom: 0;
+    }
 `;
 const Product = styled.div`
     background-color: aliceblue;
+    width: 15%;
+    height: 150px;
+    overflow: hidden;
 `;
 const ProductImage = styled.img`
     display: block;
     width: 100%;
+    object-fit: cover;
 `;
-const PurchaseDetails = styled.div``;
+const PurchaseDetails = styled.div`
+    width: 50%;
+`;
 const Name = styled.div`
     margin-bottom: 10px;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: bold;
 `;
 const PriceBox = styled.div`
-    margin-bottom: 10px;
+    margin-bottom: 30px;
+    font-size: 20px;
+    font-weight: bold;
+    color: red;
 `;
 const ButtonBox = styled.div`
     display: grid;
@@ -92,6 +116,32 @@ const Btn = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    font-weight: bold;
 `;
+const CartEmptyContainer = styled.div`
+    height: 100%;
+`;
+const EmptyCartBox = styled.h3`
+    width: 40%;
+    margin: 0 auto 20px;
+`;
+const EmptyCartImg = styled.img`
+    display: block;
+    width: 100%;
+`;
+const EmptyCartText = styled.h3`
+    font-size: 24px;
+    color: red;
+    font-weight: bold;
+    text-align: center;
+`;
+const RightBox = styled.div`
+    width: 25%;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-column-gap: 80px;
+`;
+const RatingBox = styled.div``;
+const RemoveIconBox = styled.div``;
 
 export default CartProducts;

@@ -9,6 +9,7 @@ import { BsFilter } from "react-icons/bs";
 import FilterProductsModal from "../includes/FilterProductsModal";
 import { CartState } from "../../context/Store";
 import { useContext } from "react";
+import Rating from "../includes/Rating";
 
 function Products() {
     // destructure all keys in context
@@ -146,6 +147,15 @@ function Products() {
                                     <p class="card-text lead fw-bold">
                                         ${product.price}
                                     </p>
+
+                                    {product.price > 200 ? (
+                                        <Delivery>Fast Delivery</Delivery>
+                                    ) : (
+                                        <Delivery>4 Days Delivery</Delivery>
+                                    )}
+                                    <RatingBox>
+                                        <Rating rating={product.rating.rate} />
+                                    </RatingBox>
                                     <NavItem
                                         to={`/products/${product.id}`}
                                         class="btn btn-outline-dark"
@@ -202,4 +212,12 @@ const ButtonOuterBox = styled.button`
     outline: none;
 `;
 const Button = styled.div``;
+const Delivery = styled.div`
+    text-align: center;
+    margin-bottom: 10px;
+`;
+const RatingBox = styled.div`
+    width: 80%;
+    margin: 0 auto 10px;
+`;
 export default Products;
