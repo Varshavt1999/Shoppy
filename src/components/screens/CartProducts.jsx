@@ -4,6 +4,8 @@ import { CartState } from "../../context/Store";
 import EmptyCart from "../../assets/images/empty-cart.png";
 import Rating from "../includes/Rating";
 import { MdOutlineRemoveShoppingCart } from "react-icons/md";
+import { useState } from "react";
+import { useEffect } from "react";
 
 function CartProducts() {
     const {
@@ -11,55 +13,109 @@ function CartProducts() {
         dispatch,
     } = CartState();
     console.log(cart, "cartbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+    const [total, setTotal] = useState(0);
+    console.log(count, "count from cart");
+    useEffect(() => {
+        setTotal(
+            cart.reduce(
+                (accumulator, currentelement) =>
+                    accumulator +
+                    Number(currentelement.price) * currentelement.qty, // to convert the string to number .bcs accumulator + currentelement.priceshould be in a string format
+                0 //initial value of accumulator
+            )
+        );
+    });
+    const increment = () => {
+        setCount((prevCount) => prevCount + 1);
+        // setCount(count + 1);
+    };
+    const decrement = () => {
+        setCount((prevCount) => prevCount - 1);
+        // setCount(count - 1);
+    };
     return (
         <MainContainer>
             <div className="wrapper">
-                {cart.length > 0 ? (
-                    cart.map((cartitem) => (
-                        <CartContainer>
-                            <Product>
-                                <ProductImage
-                                    src={cartitem.image}
-                                    alt="cart-item"
+                <CartOuterContainer>
+                    {cart.length > 0 ? (
+                        cart.map((cartitem) => (
+                            <CartContainer key={cartitem.id}>
+                                <Product>
+                                    <ProductImage
+                                        src={cartitem.image}
+                                        alt="cart-item"
+                                    />
+                                </Product>
+                                <PurchaseDetails>
+                                    <Name>{cartitem.category}</Name>
+                                    <PriceBox>
+                                        {cartitem.qty} × ${cartitem.price} = $
+                                        {cartitem.qty * cartitem.price}
+                                    </PriceBox>
+                                    <ButtonBox>
+                                        <Btn
+                                            onClick={() => {
+                                                dispatch({
+                                                    type: "CHANGE_CART_QTY",
+                                                    payload: {
+                                                        id: cartitem.id,
+                                                        qty: cartitem.qty - 1,
+                                                    },
+                                                });
+                                            }}
+                                        >
+                                            -
+                                        </Btn>
+                                        <Btn
+                                            onClick={() => {
+                                                dispatch({
+                                                    type: "CHANGE_CART_QTY",
+                                                    payload: {
+                                                        id: cartitem.id,
+                                                        qty: cartitem.qty + 1,
+                                                    },
+                                                });
+                                            }}
+                                        >
+                                            +
+                                        </Btn>
+                                    </ButtonBox>
+                                </PurchaseDetails>
+                                <RightBox>
+                                    <RatingBox>
+                                        <Rating rating={cartitem.rating.rate} />
+                                    </RatingBox>
+                                    <RemoveIconBox
+                                        onClick={() => {
+                                            dispatch({
+                                                type: "REMOVE_FROM_CART",
+                                                payload: cartitem,
+                                            });
+                                        }}
+                                    >
+                                        <span>Remove Product</span>
+                                        <MdOutlineRemoveShoppingCart />
+                                    </RemoveIconBox>
+                                </RightBox>
+                            </CartContainer>
+                        ))
+                    ) : (
+                        <CartEmptyContainer>
+                            <EmptyCartBox>
+                                <EmptyCartImg
+                                    src={EmptyCart}
+                                    alt="empty-cart"
                                 />
-                            </Product>
-                            <PurchaseDetails>
-                                <Name>{cartitem.category}</Name>
-                                <PriceBox>
-                                    {cartitem.qty} × ${cartitem.price} = $
-                                    {cartitem.qty * cartitem.price}
-                                </PriceBox>
-                                <ButtonBox>
-                                    <Btn>-</Btn>
-                                    <Btn>+</Btn>
-                                </ButtonBox>
-                            </PurchaseDetails>
-                            <RightBox>
-                                <RatingBox>
-                                    <Rating rating={cartitem.rating.rate} />
-                                </RatingBox>
-                                <RemoveIconBox
-                                    onClick={() => {
-                                        dispatch({
-                                            type: "REMOVE_FROM_CART",
-                                            payload: cartitem,
-                                        });
-                                    }}
-                                >
-                                    <span>Remove Product</span>
-                                    <MdOutlineRemoveShoppingCart />
-                                </RemoveIconBox>
-                            </RightBox>
-                        </CartContainer>
-                    ))
-                ) : (
-                    <CartEmptyContainer>
-                        <EmptyCartBox>
-                            <EmptyCartImg src={EmptyCart} alt="empty-cart" />
-                        </EmptyCartBox>
-                        <EmptyCartText>Cart is empty</EmptyCartText>
-                    </CartEmptyContainer>
-                )}
+                            </EmptyCartBox>
+                            <EmptyCartText>Cart is empty</EmptyCartText>
+                        </CartEmptyContainer>
+                    )}
+                </CartOuterContainer>
+                <CheckOutContainer>
+                    <Title>Subtotal ({cart.length}) items</Title>
+                    <TotalPrice>Total Price : ${total}</TotalPrice>
+                    <CheckOutBtn>Proceed to Checkout</CheckOutBtn>
+                </CheckOutContainer>
             </div>
         </MainContainer>
     );
@@ -70,9 +126,14 @@ const MainContainer = styled.div`
     background-color: #b0c4de;
     & .wrapper {
         height: 100%;
-        display: flex;
-        flex-direction: column-reverse;
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        grid-column-gap: 20px;
     }
+`;
+const CartOuterContainer = styled.div`
+    display: flex;
+    flex-direction: column-reverse;
 `;
 const CartContainer = styled.div`
     margin-bottom: 30px;
@@ -97,7 +158,7 @@ const ProductImage = styled.img`
     object-fit: cover;
 `;
 const PurchaseDetails = styled.div`
-    width: 40%;
+    width: 35%;
 `;
 const Name = styled.div`
     margin-bottom: 10px;
@@ -122,9 +183,17 @@ const Btn = styled.div`
     border: 1px solid #000;
     grid-gap: 10px;
     display: flex;
+    cursor: pointer;
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    &:hover {
+        -webkit-box-shadow: 0px 0px 16px 1px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 0px 0px 16px 1px rgba(0, 0, 0, 0.75);
+        box-shadow: 0px 0px 16px 1px rgba(0, 0, 0, 0.75);
+        background-color: #000;
+        color: #fff;
+    }
 `;
 const CartEmptyContainer = styled.div`
     height: 100%;
@@ -144,10 +213,10 @@ const EmptyCartText = styled.h3`
     text-align: center;
 `;
 const RightBox = styled.div`
-    width: 30%;
+    width: 35%;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-column-gap: 50px;
+    grid-template-columns: 1fr 1.5fr;
+    grid-column-gap: 30px;
 `;
 const RatingBox = styled.div``;
 const RemoveIconBox = styled.div`
@@ -161,6 +230,46 @@ const RemoveIconBox = styled.div`
         font-size: 16px;
         font-weight: 600;
     }
+    &:hover {
+        -webkit-box-shadow: 0px 0px 16px 1px rgba(0, 0, 0, 0.75);
+        -moz-box-shadow: 0px 0px 16px 1px rgba(0, 0, 0, 0.75);
+        box-shadow: 0px 0px 16px 1px rgba(0, 0, 0, 0.75);
+        color: #fff;
+        background-color: #000;
+    }
+`;
+const CheckOutContainer = styled.div`
+    background-color: #000;
+    padding: 40px 20px;
+`;
+const Title = styled.h3`
+    color: #fff;
+    font-size: 26px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 40px;
+`;
+const TotalPrice = styled.h3`
+    color: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+`;
+const CheckOutBtn = styled.button`
+    display: inline-block;
+    background-color: #00416a;
+    color: #fff;
+    border: 2px solid #00416a;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 5px 8px;
+    border-radius: 4px;
+    &:hover {
+        background-color: #fff;
+        color: #000;
+    }
+    width: 100%;
+    text-align: center;
 `;
 
 export default CartProducts;

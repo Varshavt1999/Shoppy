@@ -268,6 +268,7 @@ const ButtonOuterBox = styled.button`
     position: relative;
     border: none;
     outline: none;
+    background-color: #bcd4e6;
 `;
 const Button = styled.div``;
 const Delivery = styled.div`

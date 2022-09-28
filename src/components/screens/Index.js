@@ -14,7 +14,9 @@ function Index() {
     );
 }
 
-const MainContainer = styled.div``;
+const MainContainer = styled.div`
+    background-color: #bcd4e6;
+`;
 const InnerContainer = styled.div`
     display: grid;
     grid-template-columns: 1fr 4fr;
