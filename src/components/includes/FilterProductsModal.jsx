@@ -1,37 +1,68 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { CartState } from "../../context/Store";
 
 import Rating from "./Rating";
 
 function FilterProductsModal({ isFilterModal }) {
-    const [rate, setRate] = useState(3);
+    const { state, dispatch } = CartState();
     return (
         <MainContainer className={isFilterModal ? "active" : ""}>
-            <FilterItem>
+            <FilterItem
+                onClick={() =>
+                    dispatch({
+                        type: "SORT_BY_PRICE",
+                        payload: "lowtohigh",
+                    })
+                }
+            >
                 <Check></Check>
                 Ascending
             </FilterItem>
-            <FilterItem>
+            <FilterItem
+                onClick={() =>
+                    dispatch({
+                        type: "SORT_BY_PRICE",
+                        payload: "hightolow",
+                    })
+                }
+            >
                 <Check></Check>
                 Descending
             </FilterItem>
-            <FilterItem>
+            <FilterItem
+                onClick={() =>
+                    dispatch({
+                        type: "FILTER_BY_STOCK",
+                    })
+                }
+            >
                 <Check></Check>
                 Include Out Of Stock
             </FilterItem>
-            <FilterItem>
+            <FilterItem
+                onClick={() =>
+                    dispatch({
+                        type: "FILTER_BY_DELIVERY",
+                    })
+                }
+            >
                 <Check></Check>
                 Fast Delivery Only
             </FilterItem>
             <FilterItem className="filter">
                 Rating :
-                <Rating
-                    rating={rate}
-                    onClick={(index) => setRate(index + 1)}
-                    style={{ cursor: "pointer" }}
-                />
+                <Rating rating={state.byRating} style={{ cursor: "pointer" }} />
             </FilterItem>
-            <Button>Clear All Filters</Button>
+            <Button
+                onClick={() =>
+                    dispatch({
+                        type: "CLEAR_FILTER",
+                    })
+                }
+            >
+                Clear All Filters
+            </Button>
         </MainContainer>
     );
 }

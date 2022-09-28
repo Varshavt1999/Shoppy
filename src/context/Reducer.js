@@ -27,6 +27,35 @@ export const Reducer = (state, action) => {
                         : (item.qty = item.qty)
                 ),
             };
+        case "SORT_BY_PRICE":
+            return {
+                ...state,
+                sort: action.payload,
+            };
+        case "FILTER_BY_STOCK":
+            return {
+                ...state,
+                byStock: !state.byStock,
+            };
+        case "FILTER_BY_DELIVERY":
+            return {
+                ...state,
+                byFastDelivery: !state.byFastDelivery,
+            };
+        case "FILTER_BY_RATING":
+            return {
+                ...state,
+                byRating: action.payload,
+            };
+        case "CLEAR_FILTER":
+            return {
+                ...state,
+                sort: false,
+                byStock: false,
+                byFastDelivery: false,
+                byRating: 0,
+                searchQuery: "",
+            };
 
         default:
             return state;

@@ -2,24 +2,23 @@ import React from "react";
 import styled from "styled-components";
 import { FaStar } from "react-icons/fa";
 import { FaRegStar } from "react-icons/fa";
+import { CartState } from "../../context/Store";
 
 function Rating({ rating, onClick, style }) {
+    const { state, dispatch } = CartState();
     return (
         <Stars>
-            {/* <Star>
-                <BsFillStarFill />
-            </Star>
-            <Star>
-                <BsFillStarFill />
-            </Star>
-            <Star>
-                <BsFillStarFill />
-            </Star>
-            <Star>
-                <BsFillStarFill />
-            </Star> */}
             {[...Array(5)].map((_, index) => (
-                <span key={index} onClick={() => onClick(index)} style={style}>
+                <span
+                    key={index}
+                    onClick={() =>
+                        dispatch({
+                            type: "FILTER_BY_RATING",
+                            payload: index + 1,
+                        })
+                    }
+                    style={style}
+                >
                     {rating > index ? <FaStar /> : <FaRegStar />}
                 </span>
             ))}

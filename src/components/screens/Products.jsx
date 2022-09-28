@@ -19,7 +19,7 @@ function Products() {
     // destructure all keys in context
     //-------------------------------------
     const { state, dispatch } = CartState();
-    console.log(state.products, "context_state");
+    console.log(state, "context_state");
 
     // ====================================
 
@@ -30,7 +30,8 @@ function Products() {
     //     dispatch,
     // } = CartState();
     // console.log(products, "context_state_speific");
-
+    const { filterState, filterDispatch } = CartState();
+    console.log(filterState, "filterState////////");
     const axios = require("axios").default;
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);

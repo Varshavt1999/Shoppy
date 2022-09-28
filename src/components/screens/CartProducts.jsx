@@ -14,7 +14,6 @@ function CartProducts() {
     } = CartState();
     console.log(cart, "cartbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
     const [total, setTotal] = useState(0);
-    console.log(count, "count from cart");
     useEffect(() => {
         setTotal(
             cart.reduce(
@@ -25,14 +24,7 @@ function CartProducts() {
             )
         );
     });
-    const increment = () => {
-        setCount((prevCount) => prevCount + 1);
-        // setCount(count + 1);
-    };
-    const decrement = () => {
-        setCount((prevCount) => prevCount - 1);
-        // setCount(count - 1);
-    };
+
     return (
         <MainContainer>
             <div className="wrapper">
