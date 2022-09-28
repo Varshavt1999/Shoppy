@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { CartState } from "../../context/Store";
 import EmptyCart from "../../assets/images/empty-cart.png";
 import Rating from "../includes/Rating";
-import { FaTrashAlt } from "react-icons/fa";
+import { MdOutlineRemoveShoppingCart } from "react-icons/md";
 
 function CartProducts() {
     const {
@@ -38,8 +38,16 @@ function CartProducts() {
                                 <RatingBox>
                                     <Rating rating={cartitem.rating.rate} />
                                 </RatingBox>
-                                <RemoveIconBox>
-                                    <FaTrashAlt />
+                                <RemoveIconBox
+                                    onClick={() => {
+                                        dispatch({
+                                            type: "REMOVE_FROM_CART",
+                                            payload: cartitem,
+                                        });
+                                    }}
+                                >
+                                    <span>Remove Product</span>
+                                    <MdOutlineRemoveShoppingCart />
                                 </RemoveIconBox>
                             </RightBox>
                         </CartContainer>
@@ -89,7 +97,7 @@ const ProductImage = styled.img`
     object-fit: cover;
 `;
 const PurchaseDetails = styled.div`
-    width: 50%;
+    width: 40%;
 `;
 const Name = styled.div`
     margin-bottom: 10px;
@@ -136,12 +144,23 @@ const EmptyCartText = styled.h3`
     text-align: center;
 `;
 const RightBox = styled.div`
-    width: 25%;
+    width: 30%;
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-column-gap: 80px;
+    grid-template-columns: 1fr 1fr;
+    grid-column-gap: 50px;
 `;
 const RatingBox = styled.div``;
-const RemoveIconBox = styled.div``;
+const RemoveIconBox = styled.div`
+    border-radius: 5px;
+    padding: 5px;
+    border: 1px solid #000;
+    height: max-content;
+    cursor: pointer;
+    & span {
+        margin-right: 5px;
+        font-size: 16px;
+        font-weight: 600;
+    }
+`;
 
 export default CartProducts;

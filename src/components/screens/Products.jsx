@@ -3,13 +3,17 @@ import { useEffect } from "react";
 import { useState } from "react";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import styled from "styled-components";
 import { BsFilter } from "react-icons/bs";
 import FilterProductsModal from "../includes/FilterProductsModal";
 import { CartState } from "../../context/Store";
 import { useContext } from "react";
 import Rating from "../includes/Rating";
+import AddCart from "../../assets/images/add-to-cart.png";
+import RemoveCart from "../../assets/images/remove-from-cart.png";
+import { BsFillCartFill } from "react-icons/bs";
+import { BsFillCartCheckFill } from "react-icons/bs";
 
 function Products() {
     // destructure all keys in context
@@ -31,6 +35,7 @@ function Products() {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isFilterModal, setIsFilterModal] = useState(false);
+    const [cartState, setCartState] = useState(false);
     console.log(data, ",,,,,,,,,,,,,,,,,,,,,,,");
     useEffect(() => {
         setLoading(true);
@@ -78,6 +83,9 @@ function Products() {
             type: "UPDATE_PRODUCTS",
             payload: updatedList,
         });
+    };
+    const Clickedcart = () => {
+        alert("Product is added to cart");
     };
     const ShowProducts = () => {
         return (
@@ -129,24 +137,40 @@ function Products() {
                     </ButtonOuterBox>
                 </div>
 
-                {state.products?.map((product) => {
-                    return (
-                        <div className="col-md-3 mb-4" key={product.id}>
-                            <div class="card h-100 text-center p-4 ">
-                                <img
-                                    src={product.image}
-                                    class="card-img-top"
-                                    alt={product.title}
-                                    height="250px"
-                                />
-
-                                <div class="card-body">
-                                    <h5 class="card-title ">
+                <ProductsContainer>
+                    {state.products?.map((product) => {
+                        return (
+                            <ProductCard key={product.id}>
+                                <TopBox>
+                                    <ToCart
+                                        onClick={() => {
+                                            setCartState(!cartState);
+                                            Clickedcart();
+                                            dispatch({
+                                                type: "ADD_TO_CART",
+                                                payload: product,
+                                            });
+                                        }}
+                                        className={cartState ? "active" : ""}
+                                    >
+                                        <Img
+                                            src={AddCart}
+                                            alt="add-to-cart"
+                                            className="cart"
+                                        />
+                                    </ToCart>
+                                </TopBox>
+                                <ProductImgBox>
+                                    <ProductImg
+                                        src={product.image}
+                                        alt={product.title}
+                                    />
+                                </ProductImgBox>
+                                <ProductDetailsBox>
+                                    <Title>
                                         {product.title.substring(0, 12)}...
-                                    </h5>
-                                    <p class="card-text lead fw-bold">
-                                        ${product.price}
-                                    </p>
+                                    </Title>
+                                    <Price>${product.price}</Price>
 
                                     {product.price > 200 ? (
                                         <Delivery>Fast Delivery</Delivery>
@@ -156,23 +180,20 @@ function Products() {
                                     <RatingBox>
                                         <Rating rating={product.rating.rate} />
                                     </RatingBox>
-                                    <NavItem
-                                        to={`/products/${product.id}`}
-                                        class="btn btn-outline-dark"
-                                    >
+                                    <BuyButton to={`/products/${product.id}`}>
                                         Buy Now
-                                    </NavItem>
-                                </div>
-                            </div>
-                        </div>
-                    );
-                })}
+                                    </BuyButton>
+                                </ProductDetailsBox>
+                            </ProductCard>
+                        );
+                    })}
+                </ProductsContainer>
             </>
         );
     };
     return (
         <div>
-            <div className="container my-5 py-5">
+            <div className="container py-5">
                 <div className="row">
                     <div className="col-12">
                         <h1 className="display-6 fw-bolder text-center ">
@@ -188,11 +209,11 @@ function Products() {
         </div>
     );
 }
-const NavItem = styled(NavLink)`
+const BuyButton = styled(Link)`
     display: inline-block;
     text-decoration: none;
-    margin-right: 20px;
-    color: #000;
+    background-color: #00416a;
+    color: #fff;
     border: 1px solid #000;
     cursor: pointer;
     font-weight: bold;
@@ -205,6 +226,43 @@ const NavItem = styled(NavLink)`
         color: #fff;
         background-color: #000;
     }
+    width: 100%;
+    text-align: center;
+`;
+const ProductsContainer = styled.div`
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 20px;
+`;
+const ProductCard = styled.div`
+    border-radius: 8px;
+    border: 1px solid #000;
+    background-color: azure;
+    overflow: hidden;
+    padding: 15px;
+`;
+const ProductImgBox = styled.div`
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    margin-bottom: 15px;
+`;
+const ProductImg = styled.img`
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* object-fit: cover;  */
+`;
+const ProductDetailsBox = styled.div``;
+const Title = styled.h3`
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+`;
+const Price = styled.h3`
+    font-size: 19px;
+    font-weight: bold;
+    text-align: center;
 `;
 const ButtonOuterBox = styled.button`
     position: relative;
@@ -217,7 +275,21 @@ const Delivery = styled.div`
     margin-bottom: 10px;
 `;
 const RatingBox = styled.div`
-    width: 80%;
-    margin: 0 auto 10px;
+    width: 70%;
+    margin: 0 auto 20px;
+`;
+const TopBox = styled.div`
+    margin-bottom: 15px;
+`;
+const ToCart = styled.div`
+    cursor: pointer;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+`;
+const Img = styled.img`
+    display: block;
+    width: 100%;
 `;
 export default Products;

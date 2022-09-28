@@ -3,14 +3,20 @@ import styled from "styled-components";
 import { FaTrashAlt } from "react-icons/fa";
 import { CartState } from "../../context/Store";
 import { Link } from "react-router-dom";
+import Close from "../../assets/images/close.png";
 
-function QuickCartView({ cartView }) {
+function QuickCartView({ cartView, setCartView }) {
     const {
         state: { cart },
         dispatch,
     } = CartState();
     return (
         <MainContainer className={cartView ? "active" : ""}>
+            <CloseButtonContainer>
+                <CloseBtn onClick={() => setCartView(false)}>
+                    <CloseImg src={Close} alt="Close" />
+                </CloseBtn>
+            </CloseButtonContainer>
             <TopContainer>
                 {cart.length > 0 ? (
                     cart?.map((cartitem) => (
@@ -41,7 +47,7 @@ function QuickCartView({ cartView }) {
                     <EmptyCartBox>cart is empty</EmptyCartBox>
                 )}
             </TopContainer>
-            <BottomContainer>
+            <BottomContainer onClick={() => setCartView(false)}>
                 <Button to="/cart">Go To Cart</Button>
             </BottomContainer>
         </MainContainer>
@@ -49,7 +55,7 @@ function QuickCartView({ cartView }) {
 }
 
 const MainContainer = styled.div`
-    padding: 10px;
+    padding: 15px;
     z-index: 10;
     position: absolute;
     right: 20px;
@@ -68,6 +74,20 @@ const MainContainer = styled.div`
         display: block;
         transition: all ease-in 0.8s;
     }
+`;
+const CloseButtonContainer = styled.div`
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 10px;
+    margin-bottom: 20px;
+`;
+const CloseBtn = styled.div`
+    width: 22px;
+    cursor: pointer;
+`;
+const CloseImg = styled.img`
+    display: block;
+    width: 100%;
 `;
 const TopContainer = styled.div`
     margin-bottom: 20px;

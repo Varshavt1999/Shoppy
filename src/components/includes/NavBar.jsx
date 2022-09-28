@@ -17,16 +17,12 @@ function NavBar() {
         <MainContainer>
             <div className="wrapper">
                 <Logo to="/">Shoppy.</Logo>
-                <NavList>
+                <NavList onClick={() => setCartView(false)}>
                     <NavItem to="/">Home</NavItem>
-
                     <NavItem to="/products">Products</NavItem>
-
                     <NavItem to="/about">About</NavItem>
-
                     <NavItem to="/contacts">Contacts</NavItem>
                 </NavList>
-
                 <RightContainer>
                     <Form>
                         <Input
@@ -47,7 +43,7 @@ function NavBar() {
                     </CartItem>
                 </RightContainer>
             </div>
-            <QuickCartView cartView={cartView} />
+            <QuickCartView cartView={cartView} setCartView={setCartView} />
         </MainContainer>
     );
 }
@@ -77,11 +73,16 @@ const NavList = styled.div`
 const NavItem = styled(NavLink)`
     display: inline-block;
     text-decoration: none;
-    font-weight: bold;
-    font-size: 16px;
+    font-weight: 600;
+    font-size: 18px;
     color: #000;
     &:last-child {
         margin-right: 0;
+    }
+    &.active {
+        color: green;
+        border-bottom: 2px solid green;
+        width: max-content;
     }
 `;
 
