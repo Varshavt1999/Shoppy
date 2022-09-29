@@ -14,6 +14,7 @@ import AddCart from "../../assets/images/add-to-cart.png";
 import RemoveCart from "../../assets/images/remove-from-cart.png";
 import { BsFillCartFill } from "react-icons/bs";
 import { BsFillCartCheckFill } from "react-icons/bs";
+import ReactPaginate from "react-paginate";
 
 function Products() {
     // destructure all keys in context
@@ -60,6 +61,29 @@ function Products() {
                 setLoading(false);
             });
     }, []);
+
+    // //-------------------pagination--------------------------------------------
+    const [currentItems, setCurrentItems] = useState([]);
+    const [pageCount, setPageCount] = useState(0);
+
+    const [itemOffset, setItemOffset] = useState(0);
+    const itemsPerPage = 12;
+    useEffect(() => {
+        const endOffset = itemOffset + itemsPerPage;
+        console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+        setCurrentItems(state.products?.slice(itemOffset, endOffset));
+        setPageCount(Math.ceil(state.products.length / itemsPerPage));
+    }, [itemOffset, itemsPerPage, state.products]);
+
+    const handlePageClick = (event) => {
+        const newOffset =
+            (event.selected * itemsPerPage) % state.products.length;
+        console.log(
+            `User requested page number ${event.selected}, which is offset ${newOffset}`
+        );
+        setItemOffset(newOffset);
+    };
+    // //-------------------pagination--------------------------------------------
     const Loading = () => {
         return (
             <div className="d-flex justify-content-between">
@@ -139,7 +163,7 @@ function Products() {
                 </div>
 
                 <ProductsContainer>
-                    {state.products?.map((product) => {
+                    {currentItems.map((product) => {
                         return (
                             <ProductCard key={product.id}>
                                 <TopBox>
@@ -189,6 +213,22 @@ function Products() {
                         );
                     })}
                 </ProductsContainer>
+                <PaginationContainer>
+                    <ReactPaginate
+                        breakLabel="..."
+                        nextLabel="next >"
+                        onPageChange={handlePageClick}
+                        pageRangeDisplayed={5}
+                        pageCount={pageCount}
+                        previousLabel="< previous"
+                        renderOnZeroPageCount={null}
+                        containerClassName="pagination"
+                        pageLinkClassName="page-num"
+                        previousLinkClassName="page-num"
+                        nextLinkClassName="page-num"
+                        activeLinkClassName="active"
+                    />
+                </PaginationContainer>
             </>
         );
     };
@@ -293,5 +333,40 @@ const ToCart = styled.div`
 const Img = styled.img`
     display: block;
     width: 100%;
+`;
+const PaginationContainer = styled.div`
+    margin-top: 50px;
+    & .pagination {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        font-size: 18px;
+        border: 2px solid #00416a;
+        background-color: #a1caf1;
+        border-radius: 8px;
+        padding: 15px;
+        width: 50%;
+        margin: 0 auto;
+        & .page-num {
+            padding: 8px 15px;
+            margin-right: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            border-radius: 3px;
+            text-decoration: none;
+            color: #000;
+            &:last-child {
+                margin-right: 0;
+            }
+            &:hover {
+                background-color: #00416a;
+                color: #fff;
+            }
+        }
+        & .active {
+            background-color: #00416a;
+            color: #fff;
+        }
+    }
 `;
 export default Products;
