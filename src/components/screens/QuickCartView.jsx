@@ -18,7 +18,7 @@ function QuickCartView({ cartView, setCartView }) {
                 </CloseBtn>
             </CloseButtonContainer>
             <TopContainer>
-                {cart.length > 0 ? (
+                {cart?.length > 0 ? (
                     cart?.map((cartitem) => (
                         <ProductItem>
                             <LeftBox>

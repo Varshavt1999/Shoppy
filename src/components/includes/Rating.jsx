@@ -5,14 +5,18 @@ import { FaRegStar } from "react-icons/fa";
 import { CartState } from "../../context/Store";
 
 function Rating({ rating, onClick, style }) {
-    const { state, dispatch } = CartState();
+    const {
+        filterState: { byStock, byFastDelivery, searchQuery },
+        filterDispatch,
+    } = CartState();
+    // console.log(byStock, byFastDelivery, searchQuery);
     return (
         <Stars>
             {[...Array(5)].map((_, index) => (
                 <span
                     key={index}
                     onClick={() =>
-                        dispatch({
+                        filterDispatch({
                             type: "FILTER_BY_RATING",
                             payload: index + 1,
                         })

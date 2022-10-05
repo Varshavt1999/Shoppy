@@ -27,6 +27,14 @@ export const Reducer = (state, action) => {
                         : (item.qty = item.qty)
                 ),
             };
+        default:
+            return state;
+            break;
+    }
+};
+export const filterReducer = (state, action) => {
+    switch (action.type) {
+        // filter states --------------------------------------
         case "SORT_BY_PRICE":
             return {
                 ...state,
@@ -50,11 +58,15 @@ export const Reducer = (state, action) => {
         case "CLEAR_FILTER":
             return {
                 ...state,
-                sort: false,
                 byStock: false,
                 byFastDelivery: false,
                 byRating: 0,
                 searchQuery: "",
+            };
+        case "FILTER_BY_SEARCH":
+            return {
+                ...state,
+                searchQuery: action.payload,
             };
 
         default:

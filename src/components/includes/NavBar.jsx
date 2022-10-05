@@ -11,6 +11,7 @@ function NavBar() {
     const {
         state: { cart },
         dispatch,
+        filterDispatch,
     } = CartState();
     const [cartView, setCartView] = useState(false);
     return (
@@ -28,6 +29,12 @@ function NavBar() {
                         <Input
                             type="search"
                             placeholder="Search Product Here.."
+                            onChange={(e) =>
+                                filterDispatch({
+                                    type: "FILTER_BY_SEARCH",
+                                    payload: e.target.value,
+                                })
+                            }
                         />
                     </Form>
                     <Item to="/login">
@@ -39,7 +46,7 @@ function NavBar() {
                     </Item>
                     <CartItem onClick={() => setCartView(!cartView)}>
                         <BiCartAlt className="me-1" />
-                        <span>Cart({cart.length})</span>
+                        <span>Cart({cart ? cart.length : 0})</span>
                     </CartItem>
                 </RightContainer>
             </div>

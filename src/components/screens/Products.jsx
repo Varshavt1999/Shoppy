@@ -20,7 +20,11 @@ function Products() {
     // destructure all keys in context
     //-------------------------------------
     const { state, dispatch } = CartState();
-    console.log(state, "context_state");
+    const {
+        filterState: { sort, byStock, byFastDelivery, byRating, searchQuery },
+        filterDispatch,
+    } = CartState();
+    // console.log(state, "context_state");
 
     // ====================================
 
@@ -31,29 +35,32 @@ function Products() {
     //     dispatch,
     // } = CartState();
     // console.log(products, "context_state_speific");
-    const { filterState, filterDispatch } = CartState();
-    console.log(filterState, "filterState////////");
+
     const axios = require("axios").default;
     const [data, setData] = useState([]);
+    const [a] = useState([]);
     const [loading, setLoading] = useState(false);
     const [isFilterModal, setIsFilterModal] = useState(false);
     const [cartState, setCartState] = useState(false);
-    console.log(data, ",,,,,,,,,,,,,,,,,,,,,,,");
+    const [currentItems, setCurrentItems] = useState([]);
+    // console.log(currentItems, ",currentItems,,,,,,,,,,,,,,,,,,,,,,");
+
+    //======================products api call =================================
     useEffect(() => {
         setLoading(true);
         axios
             .get("https://fakestoreapi.com/products")
             .then(function (response) {
                 // handle success
-                console.log(response, "............................");
-                console.log(response.data, "data");
+                // console.log(response, "............................");
+                // console.log(response.data, "data");
                 setData(response.data);
                 setLoading(false);
                 dispatch({
                     type: "UPDATE_PRODUCTS",
                     payload: response.data,
                 });
-                console.log(state.products, "store-products");
+                // console.log(state.products, "store-products");
             })
             .catch(function (error) {
                 // handle error
@@ -61,9 +68,42 @@ function Products() {
                 setLoading(false);
             });
     }, []);
+    //======================More Filter function =================================
+    const transformProducts = () => {
+        let sortedproducts = state.products;
+        if (sort) {
+            sortedproducts = sortedproducts.sort((a, b) =>
+                sort === "lowToHigh" ? a.price - b.price : b.price - a.price
+            );
+            console.log(
+                sortedproducts,
+                "sortedproducts.................................."
+            );
+            setCurrentItems(sortedproducts);
+        }
+        if (byRating) {
+            sortedproducts = sortedproducts.filter(
+                (item) => item.rating.rate >= byRating
+            );
 
-    // //-------------------pagination--------------------------------------------
-    const [currentItems, setCurrentItems] = useState([]);
+            setCurrentItems(sortedproducts);
+        }
+        if (searchQuery) {
+            sortedproducts = sortedproducts.filter((item) =>
+                item.title.toLowerCase().includes(searchQuery)
+            );
+            setCurrentItems(sortedproducts);
+        } else {
+            setCurrentItems(state.products);
+        }
+    };
+    useEffect(() => {
+        transformProducts();
+    }, [sort, byStock, byFastDelivery, byRating, searchQuery, currentItems]);
+    //======================More Filter function =================================
+    //======================products api call =================================
+    //-------------------pagination--------------------------------------------
+
     const [pageCount, setPageCount] = useState(0);
 
     const [itemOffset, setItemOffset] = useState(0);
@@ -72,18 +112,19 @@ function Products() {
         const endOffset = itemOffset + itemsPerPage;
         console.log(`Loading items from ${itemOffset} to ${endOffset}`);
         setCurrentItems(state.products?.slice(itemOffset, endOffset));
-        setPageCount(Math.ceil(state.products.length / itemsPerPage));
+        setPageCount(Math.ceil(state.products?.length / itemsPerPage));
     }, [itemOffset, itemsPerPage, state.products]);
 
     const handlePageClick = (event) => {
         const newOffset =
-            (event.selected * itemsPerPage) % state.products.length;
+            (event.selected * itemsPerPage) % state.products?.length;
         console.log(
             `User requested page number ${event.selected}, which is offset ${newOffset}`
         );
         setItemOffset(newOffset);
     };
-    // //-------------------pagination--------------------------------------------
+    //-------------------pagination--------------------------------------------
+    //-------------------skelton loader--------------------------------------------
     const Loading = () => {
         return (
             <div className="d-flex justify-content-between">
@@ -102,6 +143,8 @@ function Products() {
             </div>
         );
     };
+    //-------------------skelton loader--------------------------------------------
+    //=====================category wise product filter ===========================
     const FilterProducts = (category) => {
         const updatedList = data.filter((x) => x.category === category);
         dispatch({
@@ -112,6 +155,8 @@ function Products() {
     const Clickedcart = () => {
         alert("Product is added to cart");
     };
+    //=====================category wise product filter ===========================
+    //-------------------function for rendering products--------------------------------------------
     const ShowProducts = () => {
         return (
             <>
@@ -158,12 +203,19 @@ function Products() {
                         >
                             More Filter <BsFilter />
                         </Button>
-                        <FilterProductsModal isFilterModal={isFilterModal} />
+                        <FilterProductsModal
+                            isFilterModal={isFilterModal}
+                            transformProducts={transformProducts}
+                        />
                     </ButtonOuterBox>
                 </div>
 
                 <ProductsContainer>
-                    {currentItems.map((product) => {
+                    {console.log(
+                        "@@@@@@@@@@@@@@@@@@@@@@@ currentitems",
+                        currentItems
+                    )}
+                    {currentItems?.map((product) => {
                         return (
                             <ProductCard key={product.id}>
                                 <TopBox>
@@ -232,6 +284,7 @@ function Products() {
             </>
         );
     };
+    //-------------------function for rendering products--------------------------------------------
     return (
         <div>
             <div className="container py-5">
