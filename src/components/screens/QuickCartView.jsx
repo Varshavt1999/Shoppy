@@ -127,9 +127,6 @@ const ProductName = styled.h3`
     font-weight: normal;
     margin-bottom: 0;
 `;
-const productPrice = styled.h3`
-    color: #fff;
-`;
 const RightBox = styled.div`
     display: grid;
     place-items: center;

@@ -21,15 +21,14 @@ export const Reducer = (state, action) => {
         case "CHANGE_CART_QTY":
             return {
                 ...state,
-                cart: state.cart.filter((item) =>
-                    item.id === action.payload.id
-                        ? (item.qty = action.payload.qty)
-                        : (item.qty = item.qty)
+                cart: state.cart.filter(
+                    (item) =>
+                        item.id === action.payload.id &&
+                        (item.qty = action.payload.qty)
                 ),
             };
         default:
             return state;
-            break;
     }
 };
 export const filterReducer = (state, action) => {
@@ -71,6 +70,5 @@ export const filterReducer = (state, action) => {
 
         default:
             return state;
-            break;
     }
 };
